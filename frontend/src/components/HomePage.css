@@ -1,0 +1,519 @@
+:root {
+  --color-bg1: rgb(8, 10, 15);
+  --color-bg2: rgb(0, 17, 32);
+  --color1: 147, 51, 234;
+  --color2: 126, 34, 206;
+  --color3: 79, 70, 229;
+  --color4: 59, 130, 246;
+  --color5: 37, 99, 235;
+  --color-interactive: 140, 100, 255;
+  --circle-size: 80%;
+  --blending: hard-light;
+  --shimmer-hue-1: 213deg;
+  --shimmer-sat-1: 95%;
+  --shimmer-lit-1: 91%;
+  --shimmer-hue-2: 248deg;
+  --shimmer-sat-2: 100%;
+  --shimmer-lit-2: 86%;
+  --shimmer-hue-3: 293deg;
+  --shimmer-sat-3: 78%;
+  --shimmer-lit-3: 89%;
+  --glow-hue: 222deg;
+  --shadow-hue: 180deg;
+  --spring-easing: linear(
+      0, 0.002, 0.01 0.9%, 0.038 1.8%, 0.156, 0.312 5.8%, 0.789 11.1%, 1.015 14.2%,
+      1.096, 1.157, 1.199, 1.224 20.3%, 1.231, 1.231, 1.226, 1.214 24.6%,
+      1.176 26.9%, 1.057 32.6%, 1.007 35.5%, 0.984, 0.968, 0.956, 0.949 42%,
+      0.946 44.1%, 0.95 46.5%, 0.998 57.2%, 1.007, 1.011 63.3%, 1.012 68.3%,
+      0.998 84%, 1
+  );
+  --spring-duration: 1.33s;
+  --backdrop: hsl(0 0% 60% / 0.12);
+  --radius: 14;
+  --border: 3;
+  --backup-border: var(--backdrop);
+  --size: 200;
+}
+
+@property --mask {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 33deg;
+}
+
+@keyframes pulse2 {
+  0% { opacity: 0; }
+  8% { opacity: 1; }
+  14% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes text {
+  0% { background-position: 100% center; }
+  100% { background-position: -100% center; }
+}
+
+@keyframes flap {
+  0%, 20%, 80%, 100% {
+      transform: scaleX(1) rotate(5deg);
+  }
+  50% {
+      transform: scaleX(0.7) rotate(7deg);
+  }
+}
+
+@keyframes slideIn {
+  0% { 
+    opacity: 0; 
+    transform: translateX(100px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+@keyframes slideOut {
+  0% { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+  100% { 
+    opacity: 0; 
+    transform: translateX(-100px); 
+  }
+}
+
+/* Основной контейнер - фон на всю страницу */
+.welcome-container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  text-shadow: 0 0 5px #000000, 0 0 20px #000;
+  user-select: none;
+  overflow: auto;
+  background-image: radial-gradient(
+      circle at 50% 0%,
+      rgba(7, 22, 110, 0.918) 16.4%,
+      rgb(0, 0, 0) 68.2%,
+      rgb(27, 23, 36) 99.1%
+  );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* Обёртка для содержимого */
+.background-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem 1rem; /* Уменьшили верхний отступ */
+  box-sizing: border-box;
+}
+
+.welcome-container h1 {
+  --fontSize: 50px;
+  --lineHeight: 70px;
+  width: auto;
+  height: calc(2 * var(--lineHeight));
+  line-height: var(--lineHeight);
+  margin: 1rem auto 0.5rem auto; /* Уменьшили отступы сверху и снизу */
+  font-size: var(--fontSize);
+  color: #ffffff;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.welcome-container h1 span {
+  display: inline-block;
+  animation: flap 0.75s infinite ease-in-out;
+}
+
+/* Для еще меньшего отступа */
+.welcome-container h1 {
+  margin: 0.5rem auto 0.25rem auto; /* Совсем минимальные отступы */
+}
+
+.background-wrapper {
+  padding: 0.5rem 1rem; /* Минимальный верхний отступ */
+}
+
+/* Основной контент с двумя колонками */
+.main-content {
+  display: flex;
+  gap: 4rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+/* Контейнер для слайд-шоу */
+.slideshow-container {
+  flex: 1;
+  width: 800px; /* Фиксированная ширина - измените здесь */
+  height: 800px; /* Фиксированная высота - измените здесь */
+  border-radius: calc(var(--radius) * 1px);
+  position: relative;
+  box-shadow: 0 1rem 2rem -1rem black;
+  border: 1px solid hsl(0 0% 100% / 0.15);
+  backdrop-filter: blur(5px);
+  overflow: hidden;
+  --base: 80;
+  --spread: 500;
+  --outer: 1;
+}
+
+.slideshow-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide.active {
+  opacity: 1;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Удаляем стили для slide-caption и slide-indicators */
+
+/* Контейнер меню */
+.menu-container {
+  flex: 1;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-items {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Кнопки меню */
+.menu-button {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.2em;
+  background-image: linear-gradient(
+      315deg, 
+      hsl(0deg 0% 0%) 0.00%, 
+      hsl(248deg 60.53% 50.5%) 47%,
+      hsl(var(--shimmer-hue-3),var(--shimmer-sat-3),var(--shimmer-lit-3)) 100.00% 
+  );
+  padding: 1em 2em;
+  position: relative;
+  isolation: isolate;
+  box-shadow: 0 2px 3px 1px hsl(var(--glow-hue) 50% 20% / 50%);
+  border: none;
+  outline: none;
+  border-radius: 0.66em;
+  scale: 1;
+  transition: all var(--spring-duration) var(--spring-easing);
+  text-transform: unset;
+  cursor: pointer;
+  width: 100%;
+  min-height: 60px;
+}
+
+.menu-button[data-card-index="0"] {
+  --base: 80;
+  --spread: 500;
+  --hue: calc(var(--base) + (var(--xp, 0) * var(--spread, 0)));
+  background-image: linear-gradient(
+      315deg, 
+      hsl(0deg 0% 0%) 0.00%, 
+      hsl(var(--hue, 248) 60.53% 50.5%) 47%,
+      hsl(var(--shimmer-hue-1),var(--shimmer-sat-1),var(--shimmer-lit-1)) 100.00% 
+  );
+}
+
+.menu-button[data-card-index="1"] {
+  --base: 150;
+  --spread: 350;
+  --hue: calc(var(--base) + (var(--xp, 0) * var(--spread, 0)));
+  background-image: linear-gradient(
+      315deg, 
+      hsl(0deg 0% 0%) 0.00%, 
+      hsl(var(--hue, 248) 60.53% 50.5%) 47%,
+      hsl(var(--shimmer-hue-2),var(--shimmer-sat-2),var(--shimmer-lit-2)) 100.00% 
+  );
+}
+
+.menu-button[data-card-index="2"] {
+  --base: 220;
+  --spread: 200;
+  --hue: calc(var(--base) + (var(--xp, 0) * var(--spread, 0)));
+  background-image: linear-gradient(
+      315deg, 
+      hsl(0deg 0% 0%) 0.00%, 
+      hsl(var(--hue, 248) 60.53% 50.5%) 47%,
+      hsl(var(--shimmer-hue-3),var(--shimmer-sat-3),var(--shimmer-lit-3)) 100.00% 
+  );
+}
+
+.shimmer {
+  position: absolute;
+  inset: -40px;
+  border-radius: inherit;
+  mix-blend-mode: color-dodge;
+  mix-blend-mode: plus-lighter;
+  pointer-events: none;
+}
+
+.shimmer::before,
+.shimmer::after {
+  transition: all 0.5s ease;
+  opacity: 0;
+  content: "";
+  border-radius: inherit;
+  position: absolute;
+  inset: 40px;
+}
+
+.shimmer::before {
+  box-shadow: 0 0 3px 2px hsl(var(--shimmer-hue-1) 20% 95%),
+      0 0 7px 4px hsl(var(--shimmer-hue-1) 20% 80%),
+      0 0 13px 8px hsl(var(--shimmer-hue-2) 40% 60%),
+      0 0 22px 6px hsl(var(--shimmer-hue-2) 20% 40%);
+  z-index: -1;
+}
+
+.shimmer::after {
+  box-shadow: inset 0 0 0 1px hsl(var(--shimmer-hue-2), 70%, 95%),
+      inset 0 0 3px 1px hsl(var(--shimmer-hue-2), 100%, 80%),
+      inset 0 0 9px 1px hsl(var(--shimmer-hue-2), 100%, 70%);
+  z-index: 2;
+}
+
+.menu-button:hover:not(:active):not([disabled]) {
+  scale: 1.05;
+  transition-duration: calc(var(--spring-duration)*0.5);
+}
+
+.menu-button:active:not([disabled]) {
+  scale: 1.02;
+  transition-duration: calc(var(--spring-duration)*0.5);
+}
+
+.menu-button:focus .shimmer,
+.menu-button:active .shimmer {
+  animation-play-state: paused!important;
+  mask-image: none!important;
+}
+
+.menu-button:hover:not([disabled]),
+.menu-button:hover:not([disabled]) .shimmer::before,
+.menu-button:hover:not([disabled]) .shimmer::after {
+  opacity: 1;
+}
+
+.menu-button:not([disabled]) .text {
+  color: #ffffff;
+}
+
+.menu-button:not([disabled]):hover .text {
+  animation: text .66s ease-in-out 1;
+}
+
+.menu-button:not([disabled]) .shimmer {
+  mask-image: none;
+  animation: pulse2 3s ease infinite both -0.5s;
+}
+
+/* Эффект свечения для слайд-шоу */
+[data-glow] {
+  --border-size: calc(var(--border, 2) * 1px);
+  --spotlight-size: calc(var(--size, 150) * 1px);
+  --hue: calc(var(--base) + (var(--xp, 0) * var(--spread, 0)));
+  background-image: radial-gradient(
+      var(--spotlight-size) var(--spotlight-size) at
+      calc(var(--x, 0) * 1px)
+      calc(var(--y, 0) * 1px),
+      hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 70) * 1%) / var(--bg-spot-opacity, 0.1)), transparent
+  );
+  background-color: var(--backdrop, transparent);
+  background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
+  background-position: 50% 50%;
+  background-attachment: fixed;
+  border: var(--border-size) solid var(--backup-border);
+  position: relative;
+  touch-action: none;
+}
+
+[data-glow]::before,
+[data-glow]::after {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: calc(var(--border-size) * -1);
+  border: var(--border-size) solid transparent;
+  border-radius: calc(var(--radius) * 1px);
+  background-attachment: fixed;
+  background-size: calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)));
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  mask:
+      linear-gradient(transparent, transparent),
+      linear-gradient(white, white);
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+}
+
+[data-glow]::before {
+  background-image: radial-gradient(
+      calc(var(--spotlight-size) * 0.75) calc(var(--spotlight-size) * 0.75) at
+      calc(var(--x, 0) * 1px)
+      calc(var(--y, 0) * 1px),
+      hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 50) * 1%) / var(--border-spot-opacity, 1)), transparent 100%
+  );
+  filter: brightness(2);
+}
+
+[data-glow]::after {
+  background-image: radial-gradient(
+      calc(var(--spotlight-size) * 0.5) calc(var(--spotlight-size) * 0.5) at
+      calc(var(--x, 0) * 1px)
+      calc(var(--y, 0) * 1px),
+      hsl(0 100% 100% / var(--border-light-opacity, 1)), transparent 100%
+  );
+}
+
+[data-glow] > [data-glow]:not(:is(a, button)) {
+  position: absolute;
+  inset: 0;
+  will-change: filter;
+  opacity: var(--outer, 1);
+  border-radius: calc(var(--radius) * 1px);
+  border-width: calc(var(--border-size) * 20);
+  filter: blur(calc(var(--border-size) * 10));
+  background: none;
+  pointer-events: none;
+}
+
+[data-glow] > [data-glow]:not(:is(a, button))::before {
+  inset: -10px;
+  border-width: 10px;
+}
+
+[data-glow] > [data-glow] {
+  border: none;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .main-content {
+    flex-direction: column;
+    gap: 3rem;
+  }
+  
+  .slideshow-container {
+    width: 400px; /* Ширина для планшетов */
+    height: 320px; /* Высота для планшетов */
+  }
+  
+  .menu-container {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-container h1 {
+    --fontSize: 30px;
+    --lineHeight: 40px;
+    margin: 1rem auto;
+  }
+
+  .main-content {
+    gap: 2rem;
+  }
+
+  .slideshow-container {
+    width: 320px; /* Ширина для телефонов */
+    height: 250px; /* Высота для телефонов */
+  }
+
+  .menu-container {
+    max-width: 320px;
+  }
+
+  .menu-items {
+    gap: 1.5rem;
+  }
+
+  .menu-button {
+    font-size: 1em;
+    padding: 0.8em 1.6em;
+    min-height: 50px;
+  }
+
+  .background-wrapper {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-container h1 {
+    --fontSize: 24px;
+    --lineHeight: 32px;
+  }
+
+  .slideshow-container {
+    width: 280px; /* Ширина для маленьких экранов */
+    height: 220px; /* Высота для маленьких экранов */
+  }
+
+  .menu-container {
+    max-width: 280px;
+  }
+
+  .menu-items {
+    gap: 1rem;
+  }
+
+  .menu-button {
+    font-size: 0.9rem;
+    padding: 0.7em 1.4em;
+    min-height: 45px;
+  }
+}
